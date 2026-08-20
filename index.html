@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>天數計算機｜兩個日期相差幾天、幾週幾天、幾個月</title>
+<meta name="description" content="輸入起算日與結束日，立即算出相差幾週幾天、幾個月幾天與總天數。可儲存多個起算日一起比較，適合追蹤寶寶週數、懷孕週數或紀念日。無廣告、免註冊，離線也能用。">
+<link rel="canonical" href="https://date-span.pages.dev/">
+<meta property="og:title" content="天數計算機｜兩個日期相差幾天、幾週幾天">
+<meta property="og:description" content="輸入兩個日期，立即算出相差幾週幾天、幾個月幾天與總天數。可儲存多個起算日一起比較，離線也能用。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://date-span.pages.dev/">
+<meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1a18" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:,">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "天數計算機",
+  "url": "https://date-span.pages.dev/",
+  "description": "輸入起算日與結束日，計算相差幾週幾天、幾個月幾天與總天數，可儲存多個起算日一起比較。",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any",
+  "inLanguage": "zh-Hant-TW",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" }
+}
+</script>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: oklch(0.984 0.004 85);
+  --surface: oklch(1 0 0);
+  --ink: oklch(0.24 0.014 60);
+  --ink-2: oklch(0.36 0.013 60);
+  --muted: oklch(0.52 0.012 62);
+  --faint: oklch(0.58 0.010 65);
+  --line: oklch(0.895 0.006 78);
+  --line-soft: oklch(0.93 0.005 78);
+  --field: oklch(0.83 0.008 78);
+  --accent: oklch(0.50 0.115 245);
+  --warn: oklch(0.50 0.09 60);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC",
+          "Microsoft JhengHei", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: oklch(0.185 0.008 70);
+    --surface: oklch(0.228 0.008 70);
+    --ink: oklch(0.94 0.006 85);
+    --ink-2: oklch(0.86 0.008 82);
+    --muted: oklch(0.68 0.010 78);
+    --faint: oklch(0.62 0.010 76);
+    --line: oklch(0.32 0.008 72);
+    --line-soft: oklch(0.30 0.008 72);
+    --field: oklch(0.38 0.008 72);
+    --accent: oklch(0.74 0.11 245);
+    --warn: oklch(0.78 0.09 65);
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 28px 18px 40px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+@media (min-width: 720px) { body { padding: 56px 32px 64px; } }
+
+main { display: flex; flex-direction: column; gap: 22px; max-width: 760px; margin: 0 auto; }
+@media (min-width: 720px) { main { gap: 32px; } }
+
+.intro { display: flex; flex-direction: column; gap: 6px; }
+h1 { margin: 0; font-size: 25px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
+@media (min-width: 720px) { h1 { font-size: 30px; } }
+.intro p { margin: 0; font-size: 14.5px; line-height: 1.65; color: var(--muted); text-wrap: pretty; }
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+@media (min-width: 720px) { .panel { gap: 16px; padding: 24px; } }
+
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field-label,
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* The end-date row stacks on narrow screens so both the field and its preset
+   button stay full-width thumb targets, and sits side by side once there is
+   room for them. */
+.end-row { display: flex; flex-direction: column; gap: 8px; }
+@media (min-width: 560px) {
+  .end-row { flex-direction: row; align-items: center; }
+  .end-row input[type="date"] { flex-grow: 1; }
+}
+
+input[type="date"], input[type="text"], button { font: inherit; color: inherit; }
+
+input[type="date"] {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  border: 1px solid var(--field);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  /* Safari on iOS renders a date input that has no value at a collapsed height
+     and right-aligns the value inside the field; both need overriding for the
+     field to match the rest of the form. */
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+}
+input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.55; cursor: pointer; }
+
+.btn {
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid var(--field);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 15px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 11px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font-size: 13.5px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.btn-quiet.is-done { color: var(--accent); }
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 46px;
+  padding: 0 16px;
+  border: 1px dashed var(--field);
+  border-radius: 12px;
+  background: none;
+  font-size: 15px;
+  color: var(--accent);
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .btn:hover, .btn-add:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-quiet:hover { color: var(--ink); background: var(--line-soft); }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.check-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+}
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 30px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.check input { width: 20px; height: 20px; flex-shrink: 0; margin: 0; accent-color: var(--accent); cursor: pointer; }
+.check-hint { padding-left: 30px; font-size: 13px; line-height: 1.55; color: var(--muted); }
+
+.starts { display: flex; flex-direction: column; gap: 10px; }
+
+.cards { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 16px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+@media (min-width: 720px) { .card { padding: 22px 24px 16px; } }
+
+.card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line-soft);
+}
+@media (min-width: 560px) {
+  .card-head { flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+  .card-head input[type="date"] { width: auto; min-width: 172px; min-height: 42px; }
+}
+
+/* The name reads as a heading until it is hovered or focused, at which point it
+   shows its edges so it is clearly a field you can retype. */
+.name {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 9px;
+  margin-left: -9px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: none;
+  font-size: 16px;
+  font-weight: 600;
+}
+@media (min-width: 560px) { .name { width: auto; flex-grow: 1; min-width: 0; } }
+@media (hover: hover) { .name:hover { border-color: var(--line); } }
+.name:focus { border-color: var(--accent); }
+.name::placeholder { font-weight: 400; color: var(--faint); }
+
+.result { display: flex; flex-direction: column; gap: 6px; padding: 16px 0 2px; }
+.result p { margin: 0; }
+
+.primary {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.primary .n {
+  font-size: clamp(2.6rem, 12vw, 3.6rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.primary .u {
+  font-size: clamp(1.15rem, 5vw, 1.45rem);
+  font-weight: 500;
+  color: var(--muted);
+}
+.primary .u.gap { padding-right: 6px; }
+
+.secondary {
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+}
+@media (min-width: 720px) { .secondary { font-size: 21px; } }
+.secondary .yr { font-size: 14px; font-weight: 400; color: var(--muted); padding-left: 6px; }
+
+.fine { font-size: 13px; line-height: 1.6; color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (min-width: 720px) { .fine { font-size: 13.5px; } }
+.note { font-size: 13px; line-height: 1.6; color: var(--warn); }
+.note:empty { display: none; }
+
+.card-actions { display: flex; flex-wrap: wrap; gap: 2px; justify-content: flex-end; padding-top: 10px; }
+
+footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+</head>
+<body>
+
+<main>
+  <div class="intro">
+    <h1>天數計算機</h1>
+    <p>輸入起算日與結束日，算出相差幾週幾天、幾個月幾天與總天數。</p>
+  </div>
+
+  <section class="panel" aria-labelledby="end-label">
+    <div class="field">
+      <span class="field-label" id="end-label">結束日</span>
+      <div class="end-row">
+        <input type="date" id="to" value="" aria-labelledby="end-label">
+        <button type="button" class="btn" id="today" aria-label="將結束日設為今天">設為今天</button>
+      </div>
+    </div>
+
+    <div class="check-block">
+      <label class="check" for="inclusive">
+        <input type="checkbox" id="inclusive" aria-describedby="inclusive-hint">
+        <span>含結束日（多算 1 天）</span>
+      </label>
+      <span class="check-hint" id="inclusive-hint">例：1 日至 3 日，未勾選為 2 天，勾選後為 3 天。</span>
+    </div>
+  </section>
+
+  <section class="starts" aria-labelledby="start-label">
+    <span class="section-label" id="start-label">起算日</span>
+
+    <!-- The first start-date card is written out here rather than created in
+         script, for two reasons: the fields still exist if scripting is off or
+         has not run yet, and this markup doubles as the template every further
+         card is cloned from. -->
+    <ul class="cards" id="cards">
+      <li class="card">
+        <div class="card-head">
+          <input class="name" type="text" value="起算日" maxlength="40" placeholder="例：出生日、預產期、紀念日" aria-label="起算日名稱">
+          <input class="date" id="from" type="date" value="2026-09-27" aria-label="起算日">
+        </div>
+        <div class="result">
+          <p class="primary"><span class="n js-weeks">—</span><span class="u gap">週</span><span class="n js-days">—</span><span class="u">天</span></p>
+          <p class="secondary"><span class="js-months"></span><span class="yr js-year"></span></p>
+          <p class="fine js-fine"></p>
+          <p class="note js-note"></p>
+        </div>
+        <div class="card-actions">
+          <button type="button" class="btn-quiet js-copy">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.6" y="4.6" width="7.8" height="7.8" rx="1.6"></rect><path d="M9.4 1.6H3.2a1.6 1.6 0 0 0-1.6 1.6v6.2"></path></svg>
+            <span class="js-copy-label">複製結果</span>
+          </button>
+          <button type="button" class="btn-quiet js-reset">還原預設</button>
+          <button type="button" class="btn-quiet js-remove">移除</button>
+        </div>
+      </li>
+    </ul>
+
+    <button type="button" class="btn-add" id="add">
+      <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M7 2.4v9.2M2.4 7h9.2"></path></svg>
+      <span>新增起算日</span>
+    </button>
+  </section>
+
+  <footer>資料只存在你的瀏覽器裡，無廣告、不追蹤，離線也能用。</footer>
+
+  <p class="sr-only" id="live" role="status" aria-live="polite" aria-atomic="true"></p>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var DEFAULT_FROM = '2026-09-27';
+  var STORE_KEY = 'date-span:v1';
+  var MAX_ROWS = 12;
+  var MS_PER_DAY = 86400000;
+
+  // ------------------------------------------------------------------ dates
+
+  // Always build dates at local midnight out of the three numbers. Handing
+  // "2026-09-27" to the Date constructor parses it as UTC instead, which lands
+  // on the previous day for anyone west of Greenwich.
+  function parseYMD(value) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value == null ? '' : value).trim());
+    if (!m) return null;
+    var y = Number(m[1]), mo = Number(m[2]), d = Number(m[3]);
+    var dt = new Date(y, mo - 1, d);
+    // The constructor silently rolls 2026-02-30 over into March, so check that
+    // the parts survived the round trip.
+    if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) return null;
+    return dt;
+  }
+
+  function toYMD(d) {
+    function pad(n) { return n < 10 ? '0' + n : String(n); }
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function today() {
+    var n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  }
+
+  // Whole days between two local-midnight dates. Rounding absorbs the 23-hour
+  // and 25-hour days that daylight saving produces where it is observed.
+  function daysBetween(a, b) {
+    return Math.round((b.getTime() - a.getTime()) / MS_PER_DAY);
+  }
+
+  // Advance by whole calendar months, clamping to the last day of the target
+  // month when that month is shorter than the source day, so 2026-01-31 plus one
+  // month is 2026-02-28 rather than spilling over into March.
+  function addMonths(date, n) {
+    var probe = new Date(date.getFullYear(), date.getMonth() + n, 1);
+    var lastDay = new Date(probe.getFullYear(), probe.getMonth() + 1, 0).getDate();
+    return new Date(probe.getFullYear(), probe.getMonth(), Math.min(date.getDate(), lastDay));
+  }
+
+  function computeSpan(fromDate, toDate, inclusive) {
+    var reversed = toDate.getTime() < fromDate.getTime();
+    var start = reversed ? toDate : fromDate;
+    var end = reversed ? fromDate : toDate;
+
+    var totalDays = daysBetween(start, end) + (inclusive ? 1 : 0);
+
+    var months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+    if (end.getDate() < start.getDate()) months -= 1;
+    if (months < 0) months = 0;
+    var anchor = addMonths(start, months);
+
+    return {
+      reversed: reversed,
+      totalDays: totalDays,
+      weeks: Math.floor(totalDays / 7),
+      weekDays: totalDays % 7,
+      months: months,
+      monthDays: daysBetween(anchor, end),
+      years: Math.floor(months / 12),
+      yearMonths: months % 12,
+      start: toYMD(start),
+      end: toYMD(end)
+    };
+  }
+
+  // ------------------------------------------------------------------ state
+
+  var state = {
+    to: toYMD(today()),
+    // True while the end date should keep meaning "today". Picking a specific
+    // end date turns it off, so that choice is what comes back tomorrow; the
+    // 設為今天 button turns it on again.
+    toFollowsToday: true,
+    inclusive: false,
+    rows: []
+  };
+  var nextId = 1;
+
+  function makeRow(name, from) {
+    return { id: 'r' + (nextId++), name: name, from: from };
+  }
+
+  function defaultName(index) {
+    return index === 0 ? '起算日' : '起算日 ' + (index + 1);
+  }
+
+  // localStorage throws outright in some privacy modes and on some file:// URLs,
+  // and setItem throws once the quota is full. The tool has to stay usable with
+  // storage silently unavailable, so every access is guarded.
+  function safeGet(key) {
+    try { return window.localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function safeSet(key, value) {
+    try { window.localStorage.setItem(key, value); } catch (e) { /* storage unavailable */ }
+  }
+
+  function loadStored() {
+    var raw = safeGet(STORE_KEY);
+    if (!raw) return;
+    var data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (!data || typeof data !== 'object') return;
+
+    if (typeof data.inclusive === 'boolean') state.inclusive = data.inclusive;
+    if (data.toFollowsToday === false && parseYMD(data.to)) {
+      state.to = data.to;
+      state.toFollowsToday = false;
+    }
+    if (Object.prototype.toString.call(data.rows) === '[object Array]') {
+      var rows = [];
+      for (var i = 0; i < data.rows.length && rows.length < MAX_ROWS; i++) {
+        var r = data.rows[i];
+        if (!r || !parseYMD(r.from)) continue;
+        rows.push(makeRow(
+          typeof r.name === 'string' ? r.name.slice(0, 40) : defaultName(rows.length),
+          r.from
+        ));
+      }
+      if (rows.length) state.rows = rows;
+    }
+  }
+
+  function save() {
+    safeSet(STORE_KEY, JSON.stringify({
+      v: 1,
+      to: state.to,
+      toFollowsToday: state.toFollowsToday,
+      inclusive: state.inclusive,
+      rows: state.rows.map(function (r) { return { name: r.name, from: r.from }; })
+    }));
+  }
+
+  // Query parameters override anything remembered, so a shared link always shows
+  // the sender what they sent. "from" may repeat, one per start date.
+  function applyQuery() {
+    var params;
+    try { params = new URLSearchParams(window.location.search); } catch (e) { return; }
+
+    var froms = params.getAll('from').filter(function (v) { return parseYMD(v); });
+    if (froms.length) {
+      state.rows = froms.slice(0, MAX_ROWS).map(function (v, i) { return makeRow(defaultName(i), v); });
+    }
+    if (parseYMD(params.get('to'))) {
+      state.to = params.get('to');
+      state.toFollowsToday = false;
+    }
+    if (params.has('inclusive')) {
+      state.inclusive = params.get('inclusive') !== '0';
+    }
+  }
+
+  // Opening the page from a file:// URL makes replaceState throw a SecurityError,
+  // so the whole write-back is optional.
+  function syncUrl() {
+    try {
+      var params = new URLSearchParams();
+      state.rows.forEach(function (r) { params.append('from', r.from); });
+      params.set('to', state.to);
+      if (state.inclusive) params.set('inclusive', '1');
+      window.history.replaceState(null, '', window.location.pathname + '?' + params.toString());
+    } catch (e) { /* this document is not addressable */ }
+  }
+
+  // ------------------------------------------------------------------- view
+
+  var cardsEl = document.getElementById('cards');
+  var toEl = document.getElementById('to');
+  var inclusiveEl = document.getElementById('inclusive');
+  var addEl = document.getElementById('add');
+  var liveEl = document.getElementById('live');
+
+  // Capture the card written into the document before touching it, and clone
+  // that for every row. The markup then lives in one place instead of being
+  // half in HTML and half in createElement calls.
+  var CARD_TEMPLATE = cardsEl.innerHTML;
+  var views = [];
+
+  function buildCard(row, index) {
+    var scratch = document.createElement('ul');
+    scratch.innerHTML = CARD_TEMPLATE;
+    var li = scratch.firstElementChild;
+
+    var view = {
+      row: row,
+      li: li,
+      name: li.querySelector('.name'),
+      date: li.querySelector('.date'),
+      weeks: li.querySelector('.js-weeks'),
+      days: li.querySelector('.js-days'),
+      months: li.querySelector('.js-months'),
+      year: li.querySelector('.js-year'),
+      fine: li.querySelector('.js-fine'),
+      note: li.querySelector('.js-note'),
+      copy: li.querySelector('.js-copy'),
+      copyLabel: li.querySelector('.js-copy-label'),
+      reset: li.querySelector('.js-reset'),
+      remove: li.querySelector('.js-remove'),
+      copyTimer: 0,
+      summary: '',
+      copyText: ''
+    };
+
+    view.name.value = row.name;
+    view.date.value = row.from;
+    // Only the first field keeps the id, so the page always has one stable
+    // handle on the primary start date and no id is ever duplicated.
+    view.date.removeAttribute('id');
+    if (index === 0) view.date.id = 'from';
+
+    view.name.addEventListener('input', function () {
+      row.name = view.name.value;
+      labelRow(view);
+      save();
+    });
+    view.date.addEventListener('input', function () {
+      row.from = view.date.value;
+      recalc(view);
+      save();
+      syncUrl();
+    });
+    view.reset.addEventListener('click', function () {
+      row.from = DEFAULT_FROM;
+      view.date.value = DEFAULT_FROM;
+      recalc(view);
+      announce(view.summary);
+      save();
+      syncUrl();
+    });
+    view.remove.addEventListener('click', function () { removeRow(row.id); });
+    view.copy.addEventListener('click', function () { copyRow(view); });
+
+    labelRow(view);
+    return view;
+  }
+
+  // Every start date has its own date field, copy button and remove button, so
+  // each needs an accessible name saying which row it belongs to.
+  function labelRow(view) {
+    var label = view.row.name.trim() || '未命名';
+    view.date.setAttribute('aria-label', '起算日：' + label);
+    view.copy.setAttribute('aria-label', '複製結果：' + label);
+    view.remove.setAttribute('aria-label', '移除起算日：' + label);
+  }
+
+  function render() {
+    views.forEach(function (v) { if (v.copyTimer) clearTimeout(v.copyTimer); });
+    cardsEl.textContent = '';
+    views = state.rows.map(buildCard);
+    views.forEach(function (v) {
+      // Nothing to remove when there is only one start date left.
+      v.remove.hidden = state.rows.length < 2;
+      cardsEl.appendChild(v.li);
+    });
+    recalcAll();
+  }
+
+  function recalc(view) {
+    var from = parseYMD(view.row.from);
+    var to = parseYMD(state.to);
+
+    if (!from || !to) {
+      view.weeks.textContent = '—';
+      view.days.textContent = '—';
+      view.months.textContent = '';
+      view.year.textContent = '';
+      view.fine.textContent = from ? '請選擇結束日。' : '請選擇起算日。';
+      view.note.textContent = '';
+      view.summary = '';
+      view.copyText = '';
+      return;
+    }
+
+    var r = computeSpan(from, to, state.inclusive);
+    view.weeks.textContent = r.weeks;
+    view.days.textContent = r.weekDays;
+    view.months.textContent = r.months + ' 個月 ' + r.monthDays + ' 天';
+    view.year.textContent = r.months >= 12
+      ? '（' + r.years + ' 年 ' + r.yearMonths + ' 個月 ' + r.monthDays + ' 天）'
+      : '';
+    view.fine.textContent = '共 ' + r.totalDays + ' 天　·　' + r.start + ' → ' + r.end +
+      (state.inclusive ? '，含結束日' : '');
+    view.note.textContent = r.reversed ? '結束日早於起算日，已自動對調計算。' : '';
+    view.summary = (view.row.name.trim() || '起算日') + '：' +
+      r.weeks + ' 週 ' + r.weekDays + ' 天，共 ' + r.totalDays + ' 天';
+    view.copyText = r.weeks + ' 週 ' + r.weekDays + ' 天 ／ ' +
+      r.months + ' 個月 ' + r.monthDays + ' 天 ／ 共 ' + r.totalDays + ' 天';
+  }
+
+  function recalcAll() { views.forEach(recalc); }
+
+  // One polite live region for the whole page, on a short delay. Announcing each
+  // of the three result lines on every keystroke would bury the answer.
+  var announceTimer = 0;
+  function announce(text) {
+    if (announceTimer) clearTimeout(announceTimer);
+    announceTimer = setTimeout(function () { liveEl.textContent = text; }, 400);
+  }
+
+  function announceAll() {
+    var parts = views.slice(0, 4).map(function (v) { return v.summary; })
+      .filter(function (s) { return s; });
+    if (views.length > 4) parts.push('其餘 ' + (views.length - 4) + ' 筆未讀出');
+    announce(parts.join('，'));
+  }
+
+  // ---------------------------------------------------------------- actions
+
+  function addRow() {
+    if (state.rows.length >= MAX_ROWS) return;
+    state.rows.push(makeRow(defaultName(state.rows.length), DEFAULT_FROM));
+    render();
+    save();
+    syncUrl();
+    var last = views[views.length - 1];
+    if (last) last.name.focus();
+  }
+
+  function removeRow(id) {
+    if (state.rows.length < 2) return;
+    var gone = null;
+    state.rows = state.rows.filter(function (r) {
+      if (r.id === id) { gone = r; return false; }
+      return true;
+    });
+    render();
+    save();
+    syncUrl();
+    announce('已移除起算日：' + ((gone && gone.name.trim()) || '未命名'));
+    addEl.focus();
+  }
+
+  // writeText needs a secure context. Double-clicking the file counts as one,
+  // but plain-HTTP hosting on a local network does not, so the old
+  // selection-based copy stays as a fallback rather than leaving the button dead.
+  function writeClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-1000px';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      if (ok) resolve(); else reject(new Error('copy unavailable'));
+    });
+  }
+
+  function copyRow(view) {
+    if (!view.copyText) return;
+    var text = view.copyText;
+    writeClipboard(text).then(function () {
+      flashCopy(view, '已複製', true);
+      announce('已複製：' + text);
+    }, function () {
+      flashCopy(view, '複製失敗', false);
+      announce('複製失敗，請手動選取文字。');
+    });
+  }
+
+  function flashCopy(view, label, done) {
+    if (view.copyTimer) clearTimeout(view.copyTimer);
+    view.copyLabel.textContent = label;
+    if (done) view.copy.classList.add('is-done');
+    else view.copy.classList.remove('is-done');
+    view.copyTimer = setTimeout(function () {
+      view.copyLabel.textContent = '複製結果';
+      view.copy.classList.remove('is-done');
+      view.copyTimer = 0;
+    }, 2000);
+  }
+
+  // ------------------------------------------------------------------- boot
+
+  loadStored();
+  applyQuery();
+  if (!state.rows.length) state.rows = [makeRow(defaultName(0), DEFAULT_FROM)];
+  if (state.toFollowsToday) state.to = toYMD(today());
+
+  toEl.value = state.to;
+  inclusiveEl.checked = state.inclusive;
+  render();
+  syncUrl();
+
+  toEl.addEventListener('input', function () {
+    state.to = toEl.value;
+    state.toFollowsToday = false;
+    recalcAll();
+    save();
+    syncUrl();
+  });
+
+  document.getElementById('today').addEventListener('click', function () {
+    state.to = toYMD(today());
+    state.toFollowsToday = true;
+    toEl.value = state.to;
+    recalcAll();
+    announceAll();
+    save();
+    syncUrl();
+  });
+
+  inclusiveEl.addEventListener('change', function () {
+    state.inclusive = inclusiveEl.checked;
+    recalcAll();
+    announceAll();
+    save();
+    syncUrl();
+  });
+
+  addEl.addEventListener('click', addRow);
+})();
+</script>
+</body>
+</html>
