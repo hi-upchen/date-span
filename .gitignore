@@ -1,0 +1,2 @@
+# wrangler 部署時產生的本機快取，不屬於原始碼
+.wrangler/
