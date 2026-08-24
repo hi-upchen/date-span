@@ -143,24 +143,38 @@ input[type="date"], input[type="text"], button { font: inherit; color: inherit; 
 
 input[type="date"] {
   width: 100%;
+  /* The height comes from the padding rather than a min-height, and the line
+     box is given a definite height, so the content box ends up exactly as tall
+     as the text. That matters because the two engines disagree about what to do
+     with leftover room inside a date field: Blink centres the value, WebKit
+     lays it against the top. Leaving no spare room settles it for both instead
+     of relying on either default. The two engines still size the value's own
+     inner box differently, so min-height keeps the field at the same height as
+     the button beside it on the engine that comes out shorter, and catches the
+     empty field, which Safari on iOS otherwise collapses. */
   min-height: 46px;
-  padding: 0 12px;
+  padding: 9px 12px;
+  line-height: 1.2;
   border: 1px solid var(--edge);
   border-radius: 4px;
   background: var(--surface);
-  font-size: 16px;
-  font-variant-numeric: tabular-nums;
   /* A date input paints its value in the platform's own format — on a phone
      that is 「2026年8月24日」, whose characters have no monospace face and would
      fall back to a different typeface than the digits. Leaving the body font
-     here keeps the native value looking native everywhere. Safari on iOS also
-     collapses the height of an empty date input and right-aligns the value, so
-     both are overridden. */
+     here keeps the native value looking native everywhere. */
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
   -webkit-appearance: none;
   appearance: none;
   display: block;
 }
-input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+/* Safari right-aligns the value inside the field and gives this inner box its
+   own line height; both are pinned so it matches the box built above. */
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+  line-height: 1.2;
+  margin: 0;
+}
 input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
 
 .btn {
