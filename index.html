@@ -653,8 +653,10 @@ footer { font-size: 12.5px; line-height: 1.75; color: var(--faint); }
     var froms = params.getAll('from').filter(function (v) { return parseYMD(v); });
     if (froms.length) {
       var units = params.getAll('unit');
+      var names = params.getAll('name');
       state.rows = froms.slice(0, MAX_ROWS).map(function (v, i) {
-        return makeRow(defaultName(i), v, units[i]);
+        var given = typeof names[i] === 'string' ? names[i].trim().slice(0, 40) : '';
+        return makeRow(given || defaultName(i), v, units[i]);
       });
     }
     if (parseYMD(params.get('to'))) {
@@ -673,6 +675,17 @@ footer { font-size: 12.5px; line-height: 1.75; color: var(--faint); }
       var params = new URLSearchParams();
       state.rows.forEach(function (r) { params.append('from', r.from); });
       state.rows.forEach(function (r) { params.append('unit', r.unit); });
+      // A row still carrying the name the page generated for it contributes an
+      // empty value rather than repeating a label the receiving page would have
+      // produced anyway, and the whole list is left out until something is
+      // actually named. Chinese characters cost nine characters each once
+      // percent-encoded, so an untouched page keeps a short link.
+      var names = state.rows.map(function (r, i) {
+        return r.name === defaultName(i) ? '' : r.name;
+      });
+      if (names.some(function (n) { return n; })) {
+        names.forEach(function (n) { params.append('name', n); });
+      }
       params.set('to', state.to);
       if (state.inclusive) params.set('inclusive', '1');
       window.history.replaceState(null, '', window.location.pathname + '?' + params.toString());
@@ -728,7 +741,11 @@ footer { font-size: 12.5px; line-height: 1.75; color: var(--faint); }
     view.name.addEventListener('input', function () {
       row.name = view.name.value;
       labelRow(view);
+      // The summary the screen reader reads back is built from the name, so it
+      // has to be rebuilt when the name changes.
+      recalc(view);
       save();
+      syncUrl();
     });
     view.date.addEventListener('input', function () {
       row.from = view.date.value;
