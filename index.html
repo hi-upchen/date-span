@@ -12,8 +12,8 @@
 <meta property="og:url" content="https://date-span.pages.dev/">
 <meta property="og:locale" content="zh_TW">
 <meta name="twitter:card" content="summary">
-<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1c1a18" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f5f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1f1c19" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:,">
 <script type="application/ld+json">
 {
@@ -30,37 +30,55 @@
 }
 </script>
 <style>
+/* Ticket-ink palette. Both themes are authored values rather than one being an
+   inversion of the other, and every text-on-surface pair was measured against
+   WCAG 2.2 AA before being written here. The tightest pair is the small field
+   labels, which is why --faint is darker than it looks like it needs to be. */
 :root {
   color-scheme: light dark;
-  --bg: oklch(0.984 0.004 85);
-  --surface: oklch(1 0 0);
-  --ink: oklch(0.24 0.014 60);
-  --ink-2: oklch(0.36 0.013 60);
-  --muted: oklch(0.52 0.012 62);
-  --faint: oklch(0.58 0.010 65);
-  --line: oklch(0.895 0.006 78);
-  --line-soft: oklch(0.93 0.005 78);
-  --field: oklch(0.83 0.008 78);
-  --accent: oklch(0.50 0.115 245);
-  --warn: oklch(0.50 0.09 60);
-  --radius: 14px;
-  --radius-sm: 9px;
+  --bg: oklch(0.972 0.008 92);
+  --surface: oklch(0.995 0.004 95);
+  --sunken: oklch(0.955 0.008 92);
+  --ink: oklch(0.20 0.010 55);
+  --ink-2: oklch(0.32 0.011 55);
+  --muted: oklch(0.46 0.012 58);
+  --faint: oklch(0.522 0.012 60);
+  --rail: oklch(0.70 0.010 70);
+  --line: oklch(0.80 0.012 80);
+  --line-soft: oklch(0.88 0.010 82);
+  --edge: oklch(0.635 0.014 75);
+  --accent: oklch(0.46 0.16 28);
+  --accent-ink: oklch(1 0 0);
+  --warn: oklch(0.46 0.16 28);
+  --unit-ink: oklch(0.46 0.012 58);
+
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC",
           "Microsoft JhengHei", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --radius: 6px;
+  --label-space: 0.18em;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: oklch(0.185 0.008 70);
-    --surface: oklch(0.228 0.008 70);
-    --ink: oklch(0.94 0.006 85);
-    --ink-2: oklch(0.86 0.008 82);
-    --muted: oklch(0.68 0.010 78);
-    --faint: oklch(0.62 0.010 76);
-    --line: oklch(0.32 0.008 72);
-    --line-soft: oklch(0.30 0.008 72);
-    --field: oklch(0.38 0.008 72);
-    --accent: oklch(0.74 0.11 245);
-    --warn: oklch(0.78 0.09 65);
+    /* The page is a dark grey rather than black and the card sits a step
+       lighter, so depth reads as lightness the way Material's dark theme does. */
+    --bg: oklch(0.175 0.006 60);
+    --surface: oklch(0.215 0.006 60);
+    --sunken: oklch(0.255 0.006 60);
+    --ink: oklch(0.93 0.008 88);
+    --ink-2: oklch(0.84 0.008 85);
+    --muted: oklch(0.68 0.010 80);
+    --faint: oklch(0.645 0.012 78);
+    --rail: oklch(0.52 0.010 72);
+    --line: oklch(0.36 0.008 68);
+    --line-soft: oklch(0.30 0.008 66);
+    --edge: oklch(0.555 0.012 72);
+    /* Saturated colour vibrates on dark surfaces, so the accent gains lightness
+       and loses a little chroma rather than staying put. */
+    --accent: oklch(0.72 0.15 32);
+    --accent-ink: oklch(0.18 0.010 40);
+    --warn: oklch(0.76 0.14 40);
+    --unit-ink: oklch(0.74 0.008 80);
   }
 }
 
@@ -68,7 +86,7 @@
 
 body {
   margin: 0;
-  padding: 28px 18px 40px;
+  padding: 26px 16px 40px;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
@@ -77,41 +95,39 @@ body {
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
 }
-@media (min-width: 720px) { body { padding: 56px 32px 64px; } }
+@media (min-width: 720px) { body { padding: 52px 32px 64px; } }
 
-main { display: flex; flex-direction: column; gap: 22px; max-width: 760px; margin: 0 auto; }
-@media (min-width: 720px) { main { gap: 32px; } }
+main { display: flex; flex-direction: column; gap: 20px; max-width: 780px; margin: 0 auto; }
+@media (min-width: 720px) { main { gap: 28px; } }
 
 .intro { display: flex; flex-direction: column; gap: 6px; }
-h1 { margin: 0; font-size: 25px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
-@media (min-width: 720px) { h1 { font-size: 30px; } }
-.intro p { margin: 0; font-size: 14.5px; line-height: 1.65; color: var(--muted); text-wrap: pretty; }
+h1 { margin: 0; font-size: 25px; font-weight: 600; letter-spacing: 0.01em; line-height: 1.25; }
+@media (min-width: 720px) { h1 { font-size: 29px; } }
+.intro p { margin: 0; font-size: 14.5px; line-height: 1.7; color: var(--muted); text-wrap: pretty; }
+
+.mlabel {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: var(--label-space);
+  color: var(--faint);
+}
+
+/* ---------------------------------------------------------- shared end date */
 
 .panel {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 18px 16px;
+  padding: 16px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
 }
-@media (min-width: 720px) { .panel { gap: 16px; padding: 24px; } }
+@media (min-width: 720px) { .panel { padding: 20px 22px; } }
 
 .field { display: flex; flex-direction: column; gap: 8px; }
-.field-label,
-.section-label {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-}
-
-/* The end-date row stacks on narrow screens so both the field and its preset
-   button stay full-width thumb targets, and sits side by side once there is
-   room for them. */
 .end-row { display: flex; flex-direction: column; gap: 8px; }
-@media (min-width: 560px) {
+@media (min-width: 520px) {
   .end-row { flex-direction: row; align-items: center; }
   .end-row input[type="date"] { flex-grow: 1; }
 }
@@ -121,28 +137,27 @@ input[type="date"], input[type="text"], button { font: inherit; color: inherit; 
 input[type="date"] {
   width: 100%;
   min-height: 46px;
-  padding: 0 13px;
-  border: 1px solid var(--field);
-  border-radius: var(--radius-sm);
+  padding: 0 12px;
+  border: 1px solid var(--edge);
+  border-radius: 4px;
   background: var(--surface);
-  font-size: 17px;
+  font-family: var(--mono);
+  font-size: 16px;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
-  /* Safari on iOS renders a date input that has no value at a collapsed height
-     and right-aligns the value inside the field; both need overriding for the
-     field to match the rest of the form. */
+  /* Safari on iOS collapses the height of a date input with no value and
+     right-aligns the value inside the field; both need overriding. */
   -webkit-appearance: none;
   appearance: none;
   display: block;
 }
 input[type="date"]::-webkit-date-and-time-value { text-align: left; }
-input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.55; cursor: pointer; }
+input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
 
 .btn {
   min-height: 46px;
-  padding: 0 18px;
-  border: 1px solid var(--field);
-  border-radius: var(--radius-sm);
+  padding: 0 16px;
+  border: 1px solid var(--edge);
+  border-radius: 4px;
   background: var(--surface);
   font-size: 15px;
   cursor: pointer;
@@ -153,11 +168,11 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.55; cursor: p
   align-items: center;
   gap: 6px;
   min-height: 40px;
-  padding: 0 11px;
+  padding: 0 10px;
   border: none;
-  border-radius: 8px;
+  border-radius: 3px;
   background: none;
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--muted);
   cursor: pointer;
 }
@@ -169,8 +184,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.55; cursor: p
   gap: 7px;
   min-height: 46px;
   padding: 0 16px;
-  border: 1px dashed var(--field);
-  border-radius: 12px;
+  border: 1px dashed var(--edge);
+  border-radius: var(--radius);
   background: none;
   font-size: 15px;
   color: var(--accent);
@@ -178,117 +193,176 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.55; cursor: p
 }
 @media (hover: hover) {
   .btn:hover, .btn-add:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-quiet:hover { color: var(--ink); background: var(--line-soft); }
+  .btn-quiet:hover { color: var(--ink); background: var(--sunken); }
 }
 
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 
 .check-block {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line-soft);
+  padding-top: 13px;
+  border-top: 1px dashed var(--line-soft);
 }
-.check {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  min-height: 30px;
-  font-size: 15px;
-  cursor: pointer;
-}
-.check input { width: 20px; height: 20px; flex-shrink: 0; margin: 0; accent-color: var(--accent); cursor: pointer; }
-.check-hint { padding-left: 30px; font-size: 13px; line-height: 1.55; color: var(--muted); }
+.check { display: flex; gap: 10px; align-items: center; min-height: 30px; font-size: 15px; cursor: pointer; }
+.check input { width: 19px; height: 19px; flex-shrink: 0; margin: 0; accent-color: var(--accent); cursor: pointer; }
+.check-hint { padding-left: 29px; font-size: 13px; line-height: 1.6; color: var(--muted); }
+
+/* --------------------------------------------------------------- the ticket */
 
 .starts { display: flex; flex-direction: column; gap: 10px; }
-
 .cards { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
 
+/* The stub sits above the body on a narrow screen and beside it once there is
+   room, so the perforation runs across the ticket on a phone and down it on a
+   desktop. overflow:hidden is what turns the notch circles into half-round
+   bites out of the card edge. */
 .card {
   display: flex;
   flex-direction: column;
-  padding: 18px 16px 12px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
+  overflow: hidden;
 }
-@media (min-width: 720px) { .card { padding: 22px 24px 16px; } }
 
-.card-head {
+.stub {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--line-soft);
+  gap: 12px;
+  padding: 14px 15px;
+  background: var(--sunken);
 }
-@media (min-width: 560px) {
-  .card-head { flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
-  .card-head input[type="date"] { width: auto; min-width: 172px; min-height: 42px; }
+.stub-fields { display: flex; gap: 20px; }
+.pair { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ro-date {
+  font-family: var(--mono);
+  font-size: 14.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  padding: 0 1px;
 }
 
-/* The name reads as a heading until it is hovered or focused, at which point it
-   shows its edges so it is clearly a field you can retype. */
+.perf { position: relative; height: 0; border-top: 1px dashed var(--rail); }
+.perf::before, .perf::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--rail);
+}
+.perf::before { left: -7px; }
+.perf::after { right: -7px; }
+
+.main { display: flex; flex-direction: column; gap: 10px; padding: 14px 15px 10px; }
+
+@media (min-width: 620px) {
+  .card { flex-direction: row; align-items: stretch; }
+  .stub { width: 208px; flex-shrink: 0; justify-content: space-between; }
+  .stub-fields { flex-direction: column; gap: 10px; }
+  .perf {
+    width: 0;
+    height: auto;
+    border-top: none;
+    border-left: 1px dashed var(--rail);
+    flex-shrink: 0;
+  }
+  .perf::before { top: -7px; left: -6px; }
+  .perf::after { top: auto; bottom: -7px; left: -6px; right: auto; }
+  .main { flex-grow: 1; min-width: 0; padding: 16px 18px 12px; justify-content: center; }
+}
+
+/* The name reads as a heading until hovered or focused, then shows its edges so
+   it is clearly a field you can retype. */
 .name {
   width: 100%;
-  min-height: 38px;
-  padding: 0 9px;
-  margin-left: -9px;
+  min-height: 36px;
+  padding: 0 8px;
+  margin-left: -8px;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 3px;
   background: none;
-  font-size: 16px;
+  font-size: 15.5px;
   font-weight: 600;
 }
-@media (min-width: 560px) { .name { width: auto; flex-grow: 1; min-width: 0; } }
-@media (hover: hover) { .name:hover { border-color: var(--line); } }
+@media (hover: hover) { .name:hover { border-color: var(--edge); } }
 .name:focus { border-color: var(--accent); }
 .name::placeholder { font-weight: 400; color: var(--faint); }
 
-.result { display: flex; flex-direction: column; gap: 6px; padding: 16px 0 2px; }
-.result p { margin: 0; }
+/* --------------------------------------------------------- the unit chooser */
 
-.primary {
+.units {
   display: flex;
-  align-items: baseline;
-  gap: 3px;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
+  align-self: flex-start;
+  max-width: 100%;
+  border: 1px solid var(--edge);
+  border-radius: 4px;
+  overflow: hidden;
 }
-.primary .n {
-  font-size: clamp(2.6rem, 12vw, 3.6rem);
+.units button {
+  min-height: 38px;
+  padding: 0 11px;
+  border: none;
+  border-right: 1px solid var(--edge);
+  background: none;
+  font-size: 12.5px;
+  color: var(--unit-ink);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.units button:last-child { border-right: none; }
+.units button[aria-checked="true"] {
+  background: var(--accent);
+  color: var(--accent-ink);
   font-weight: 600;
-  letter-spacing: -0.03em;
 }
-.primary .u {
-  font-size: clamp(1.15rem, 5vw, 1.45rem);
+/* The group is one Tab stop, so the ring has to sit on the group, not on the
+   one child that currently holds focus. */
+.units:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.units button:focus-visible { outline: none; }
+
+/* ------------------------------------------------------------- the headline */
+
+.figure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.4em;
+  margin: 0;
+  line-height: 1.05;
+}
+/* Each number and its unit is one unbreakable pair, so a narrow screen can only
+   break between pairs and never between a digit and the character that gives it
+   meaning. */
+.figure .p { white-space: nowrap; font-size: clamp(2.1rem, 10.5vw, 3.1rem); }
+.figure .n {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+/* Unit characters at roughly half the digit size: large enough to read, small
+   enough that the digits carry the line. The left margin is the quarter-em gap
+   Chinese typography asks for between Han characters and Western numerals. */
+.figure .u {
+  font-size: 0.52em;
   font-weight: 500;
   color: var(--muted);
+  margin-left: 0.22em;
 }
-.primary .u.gap { padding-right: 6px; }
 
-.secondary {
-  font-size: 19px;
-  font-weight: 500;
-  color: var(--ink-2);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.45;
-}
-@media (min-width: 720px) { .secondary { font-size: 21px; } }
-.secondary .yr { font-size: 14px; font-weight: 400; color: var(--muted); padding-left: 6px; }
-
-.fine { font-size: 13px; line-height: 1.6; color: var(--muted); font-variant-numeric: tabular-nums; }
-@media (min-width: 720px) { .fine { font-size: 13.5px; } }
-.note { font-size: 13px; line-height: 1.6; color: var(--warn); }
+.total { margin: 0; font-size: 13px; color: var(--muted); }
+.total .v { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.note { margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--warn); }
 .note:empty { display: none; }
 
-.card-actions { display: flex; flex-wrap: wrap; gap: 2px; justify-content: flex-end; padding-top: 10px; }
+.card-actions { display: flex; flex-wrap: wrap; gap: 2px; justify-content: flex-end; padding-top: 4px; }
 
-footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
+footer { font-size: 12.5px; line-height: 1.75; color: var(--faint); }
 
 .sr-only {
   position: absolute;
@@ -312,7 +386,7 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
 
   <section class="panel" aria-labelledby="end-label">
     <div class="field">
-      <span class="field-label" id="end-label">結束日</span>
+      <span class="mlabel" id="end-label">結束日</span>
       <div class="end-row">
         <input type="date" id="to" value="" aria-labelledby="end-label">
         <button type="button" class="btn" id="today" aria-label="將結束日設為今天">設為今天</button>
@@ -329,31 +403,46 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
   </section>
 
   <section class="starts" aria-labelledby="start-label">
-    <span class="section-label" id="start-label">起算日</span>
+    <span class="mlabel" id="start-label">起算日</span>
 
-    <!-- The first start-date card is written out here rather than created in
-         script, for two reasons: the fields still exist if scripting is off or
-         has not run yet, and this markup doubles as the template every further
-         card is cloned from. -->
+    <!-- The first ticket is written out here rather than built in script: the
+         fields still exist if scripting is off or has not run yet, and this
+         markup doubles as the template every further ticket is cloned from. -->
     <ul class="cards" id="cards">
       <li class="card">
-        <div class="card-head">
+        <div class="stub">
           <input class="name" type="text" value="起算日" maxlength="40" placeholder="例：出生日、預產期、紀念日" aria-label="起算日名稱">
-          <input class="date" id="from" type="date" value="2026-09-27" aria-label="起算日">
+          <div class="stub-fields">
+            <div class="pair">
+              <span class="mlabel">起算日</span>
+              <input class="date" id="from" type="date" value="2026-09-27" aria-label="起算日">
+            </div>
+            <div class="pair">
+              <span class="mlabel">結束日</span>
+              <span class="ro-date js-to"></span>
+            </div>
+          </div>
         </div>
-        <div class="result">
-          <p class="primary"><span class="n js-weeks">—</span><span class="u gap">週</span><span class="n js-days">—</span><span class="u">天</span></p>
-          <p class="secondary"><span class="js-months"></span><span class="yr js-year"></span></p>
-          <p class="fine js-fine"></p>
+
+        <div class="perf" aria-hidden="true"></div>
+
+        <div class="main">
+          <div class="units js-units" role="radiogroup" aria-label="顯示單位">
+            <button type="button" role="radio" aria-checked="false" tabindex="-1" data-unit="week">幾週</button>
+            <button type="button" role="radio" aria-checked="true" tabindex="0" data-unit="month">幾個月</button>
+            <button type="button" role="radio" aria-checked="false" tabindex="-1" data-unit="day">總天數</button>
+          </div>
+          <p class="figure js-figure"></p>
+          <p class="total js-total"></p>
           <p class="note js-note"></p>
-        </div>
-        <div class="card-actions">
-          <button type="button" class="btn-quiet js-copy">
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.6" y="4.6" width="7.8" height="7.8" rx="1.6"></rect><path d="M9.4 1.6H3.2a1.6 1.6 0 0 0-1.6 1.6v6.2"></path></svg>
-            <span class="js-copy-label">複製結果</span>
-          </button>
-          <button type="button" class="btn-quiet js-reset">還原預設</button>
-          <button type="button" class="btn-quiet js-remove">移除</button>
+          <div class="card-actions">
+            <button type="button" class="btn-quiet js-copy">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.6" y="4.6" width="7.8" height="7.8" rx="1.4"></rect><path d="M9.4 1.6H3.2a1.6 1.6 0 0 0-1.6 1.6v6.2"></path></svg>
+              <span class="js-copy-label">複製結果</span>
+            </button>
+            <button type="button" class="btn-quiet js-reset">還原預設</button>
+            <button type="button" class="btn-quiet js-remove">移除</button>
+          </div>
         </div>
       </li>
     </ul>
@@ -374,9 +463,11 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
   'use strict';
 
   var DEFAULT_FROM = '2026-09-27';
-  var STORE_KEY = 'date-span:v1';
+  var STORE_KEY = 'date-span:v2';
   var MAX_ROWS = 12;
   var MS_PER_DAY = 86400000;
+  var UNITS = ['week', 'month', 'day'];
+  var DEFAULT_UNIT = 'month';
 
   // ------------------------------------------------------------------ dates
 
@@ -402,6 +493,22 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
   function today() {
     var n = new Date();
     return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  }
+
+  var dateFormatter = null;
+  try {
+    dateFormatter = new Intl.DateTimeFormat(undefined, {
+      year: 'numeric', month: '2-digit', day: '2-digit'
+    });
+  } catch (e) { dateFormatter = null; }
+
+  // Matches how the neighbouring date input paints its value: both follow the
+  // browser's locale, so the two dates in a stub read as the same kind of thing.
+  function displayDate(ymd) {
+    var d = parseYMD(ymd);
+    if (!d) return '—';
+    if (!dateFormatter) return ymd;
+    try { return dateFormatter.format(d); } catch (e) { return ymd; }
   }
 
   // Whole days between two local-midnight dates. Rounding absorbs the 23-hour
@@ -445,6 +552,22 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
     };
   }
 
+  // The chosen unit decides which pairs the headline shows. A span of a year or
+  // more rolls the month figure up into years, months and days rather than
+  // reporting an unreadable month count.
+  function figureParts(span, unit) {
+    if (unit === 'week') return [[span.weeks, '週'], [span.weekDays, '天']];
+    if (unit === 'day') return [[span.totalDays, '天']];
+    if (span.months >= 12) {
+      return [[span.years, '年'], [span.yearMonths, '個月'], [span.monthDays, '天']];
+    }
+    return [[span.months, '個月'], [span.monthDays, '天']];
+  }
+
+  function partsText(parts) {
+    return parts.map(function (p) { return p[0] + ' ' + p[1]; }).join(' ');
+  }
+
   // ------------------------------------------------------------------ state
 
   var state = {
@@ -458,8 +581,13 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
   };
   var nextId = 1;
 
-  function makeRow(name, from) {
-    return { id: 'r' + (nextId++), name: name, from: from };
+  function makeRow(name, from, unit) {
+    return {
+      id: 'r' + (nextId++),
+      name: name,
+      from: from,
+      unit: UNITS.indexOf(unit) >= 0 ? unit : DEFAULT_UNIT
+    };
   }
 
   function defaultName(index) {
@@ -495,7 +623,8 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
         if (!r || !parseYMD(r.from)) continue;
         rows.push(makeRow(
           typeof r.name === 'string' ? r.name.slice(0, 40) : defaultName(rows.length),
-          r.from
+          r.from,
+          r.unit
         ));
       }
       if (rows.length) state.rows = rows;
@@ -504,23 +633,29 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
 
   function save() {
     safeSet(STORE_KEY, JSON.stringify({
-      v: 1,
+      v: 2,
       to: state.to,
       toFollowsToday: state.toFollowsToday,
       inclusive: state.inclusive,
-      rows: state.rows.map(function (r) { return { name: r.name, from: r.from }; })
+      rows: state.rows.map(function (r) {
+        return { name: r.name, from: r.from, unit: r.unit };
+      })
     }));
   }
 
   // Query parameters override anything remembered, so a shared link always shows
-  // the sender what they sent. "from" may repeat, one per start date.
+  // the receiver what the sender saw. "from" and "unit" may repeat, one per
+  // start date, and are matched up by position.
   function applyQuery() {
     var params;
     try { params = new URLSearchParams(window.location.search); } catch (e) { return; }
 
     var froms = params.getAll('from').filter(function (v) { return parseYMD(v); });
     if (froms.length) {
-      state.rows = froms.slice(0, MAX_ROWS).map(function (v, i) { return makeRow(defaultName(i), v); });
+      var units = params.getAll('unit');
+      state.rows = froms.slice(0, MAX_ROWS).map(function (v, i) {
+        return makeRow(defaultName(i), v, units[i]);
+      });
     }
     if (parseYMD(params.get('to'))) {
       state.to = params.get('to');
@@ -537,6 +672,7 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
     try {
       var params = new URLSearchParams();
       state.rows.forEach(function (r) { params.append('from', r.from); });
+      state.rows.forEach(function (r) { params.append('unit', r.unit); });
       params.set('to', state.to);
       if (state.inclusive) params.set('inclusive', '1');
       window.history.replaceState(null, '', window.location.pathname + '?' + params.toString());
@@ -551,9 +687,9 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
   var addEl = document.getElementById('add');
   var liveEl = document.getElementById('live');
 
-  // Capture the card written into the document before touching it, and clone
-  // that for every row. The markup then lives in one place instead of being
-  // half in HTML and half in createElement calls.
+  // Capture the ticket written into the document before touching it, and clone
+  // that for every row, so the markup lives in one place rather than half in
+  // HTML and half in createElement calls.
   var CARD_TEMPLATE = cardsEl.innerHTML;
   var views = [];
 
@@ -567,11 +703,11 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
       li: li,
       name: li.querySelector('.name'),
       date: li.querySelector('.date'),
-      weeks: li.querySelector('.js-weeks'),
-      days: li.querySelector('.js-days'),
-      months: li.querySelector('.js-months'),
-      year: li.querySelector('.js-year'),
-      fine: li.querySelector('.js-fine'),
+      toText: li.querySelector('.js-to'),
+      units: li.querySelector('.js-units'),
+      unitBtns: [].slice.call(li.querySelectorAll('.js-units button')),
+      figure: li.querySelector('.js-figure'),
+      total: li.querySelector('.js-total'),
       note: li.querySelector('.js-note'),
       copy: li.querySelector('.js-copy'),
       copyLabel: li.querySelector('.js-copy-label'),
@@ -611,15 +747,58 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
     view.remove.addEventListener('click', function () { removeRow(row.id); });
     view.copy.addEventListener('click', function () { copyRow(view); });
 
+    view.unitBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        pickUnit(view, btn.getAttribute('data-unit'), false);
+      });
+    });
+    // A radio group is one Tab stop; the arrow keys move within it and select as
+    // they go, which is what the ARIA authoring practices ask for.
+    view.units.addEventListener('keydown', function (e) {
+      var at = UNITS.indexOf(view.row.unit);
+      var next = null;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (at + 1) % UNITS.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (at - 1 + UNITS.length) % UNITS.length;
+      else if (e.key === 'Home') next = 0;
+      else if (e.key === 'End') next = UNITS.length - 1;
+      if (next === null) return;
+      e.preventDefault();
+      pickUnit(view, UNITS[next], true);
+    });
+
+    applyUnit(view);
     labelRow(view);
     return view;
   }
 
-  // Every start date has its own date field, copy button and remove button, so
-  // each needs an accessible name saying which row it belongs to.
+  function applyUnit(view, focus) {
+    view.unitBtns.forEach(function (btn) {
+      var on = btn.getAttribute('data-unit') === view.row.unit;
+      btn.setAttribute('aria-checked', on ? 'true' : 'false');
+      btn.tabIndex = on ? 0 : -1;
+      if (on && focus) btn.focus();
+    });
+  }
+
+  function pickUnit(view, unit, focus) {
+    if (UNITS.indexOf(unit) < 0 || view.row.unit === unit) {
+      applyUnit(view, focus);
+      return;
+    }
+    view.row.unit = unit;
+    applyUnit(view, focus);
+    recalc(view);
+    announce(view.summary);
+    save();
+    syncUrl();
+  }
+
+  // Every ticket has its own date field, unit chooser, copy button and remove
+  // button, so each needs an accessible name saying which row it belongs to.
   function labelRow(view) {
     var label = view.row.name.trim() || '未命名';
     view.date.setAttribute('aria-label', '起算日：' + label);
+    view.units.setAttribute('aria-label', '顯示單位：' + label);
     view.copy.setAttribute('aria-label', '複製結果：' + label);
     view.remove.setAttribute('aria-label', '移除起算日：' + label);
   }
@@ -640,40 +819,59 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
     var from = parseYMD(view.row.from);
     var to = parseYMD(state.to);
 
+    view.toText.textContent = displayDate(state.to);
+
     if (!from || !to) {
-      view.weeks.textContent = '—';
-      view.days.textContent = '—';
-      view.months.textContent = '';
-      view.year.textContent = '';
-      view.fine.textContent = from ? '請選擇結束日。' : '請選擇起算日。';
+      view.figure.textContent = '—';
+      view.total.textContent = from ? '請選擇結束日。' : '請選擇起算日。';
       view.note.textContent = '';
       view.summary = '';
       view.copyText = '';
       return;
     }
 
-    var r = computeSpan(from, to, state.inclusive);
-    view.weeks.textContent = r.weeks;
-    view.days.textContent = r.weekDays;
-    view.months.textContent = r.months + ' 個月 ' + r.monthDays + ' 天';
-    view.year.textContent = r.months >= 12
-      ? '（' + r.years + ' 年 ' + r.yearMonths + ' 個月 ' + r.monthDays + ' 天）'
-      : '';
-    view.fine.textContent = '共 ' + r.totalDays + ' 天　·　' + r.start + ' → ' + r.end +
-      (state.inclusive ? '，含結束日' : '');
-    view.note.textContent = r.reversed ? '結束日早於起算日，已自動對調計算。' : '';
-    view.summary = (view.row.name.trim() || '起算日') + '：' +
-      r.weeks + ' 週 ' + r.weekDays + ' 天，共 ' + r.totalDays + ' 天';
-    view.copyText = r.weeks + ' 週 ' + r.weekDays + ' 天 ／ ' +
-      r.months + ' 個月 ' + r.monthDays + ' 天 ／ 共 ' + r.totalDays + ' 天';
+    var span = computeSpan(from, to, state.inclusive);
+    var parts = figureParts(span, view.row.unit);
+
+    view.figure.textContent = '';
+    parts.forEach(function (p) {
+      var pair = document.createElement('span');
+      pair.className = 'p';
+      var n = document.createElement('span');
+      n.className = 'n';
+      n.textContent = p[0];
+      var u = document.createElement('span');
+      u.className = 'u';
+      u.textContent = p[1];
+      pair.appendChild(n);
+      pair.appendChild(u);
+      view.figure.appendChild(pair);
+    });
+
+    view.total.textContent = '';
+    view.total.appendChild(document.createTextNode('共 '));
+    var v = document.createElement('span');
+    v.className = 'v';
+    v.textContent = span.totalDays;
+    view.total.appendChild(v);
+    view.total.appendChild(document.createTextNode(
+      ' 天' + (state.inclusive ? '（含結束日）' : '')
+    ));
+
+    view.note.textContent = span.reversed ? '結束日早於起算日，已自動對調計算。' : '';
+
+    var text = partsText(parts);
+    view.summary = (view.row.name.trim() || '起算日') + '：' + text + '，共 ' + span.totalDays + ' 天';
+    view.copyText = text + ' ／ 共 ' + span.totalDays + ' 天';
   }
 
   function recalcAll() { views.forEach(recalc); }
 
-  // One polite live region for the whole page, on a short delay. Announcing each
-  // of the three result lines on every keystroke would bury the answer.
+  // One polite live region for the whole page, on a short delay. Announcing
+  // every line of every ticket on each keystroke would bury the answer.
   var announceTimer = 0;
   function announce(text) {
+    if (!text) return;
     if (announceTimer) clearTimeout(announceTimer);
     announceTimer = setTimeout(function () { liveEl.textContent = text; }, 400);
   }
@@ -689,7 +887,7 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
 
   function addRow() {
     if (state.rows.length >= MAX_ROWS) return;
-    state.rows.push(makeRow(defaultName(state.rows.length), DEFAULT_FROM));
+    state.rows.push(makeRow(defaultName(state.rows.length), DEFAULT_FROM, DEFAULT_UNIT));
     render();
     save();
     syncUrl();
@@ -761,7 +959,7 @@ footer { font-size: 12.5px; line-height: 1.7; color: var(--faint); }
 
   loadStored();
   applyQuery();
-  if (!state.rows.length) state.rows = [makeRow(defaultName(0), DEFAULT_FROM)];
+  if (!state.rows.length) state.rows = [makeRow(defaultName(0), DEFAULT_FROM, DEFAULT_UNIT)];
   if (state.toFollowsToday) state.to = toYMD(today());
 
   toEl.value = state.to;
