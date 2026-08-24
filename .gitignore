@@ -1,2 +1,5 @@
 # wrangler 部署時產生的本機快取，不屬於原始碼
 .wrangler/
+
+# macOS Finder 在任何開啟過的資料夾都會留下這個檔案
+.DS_Store
