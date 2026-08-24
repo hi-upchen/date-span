@@ -143,18 +143,8 @@ input[type="date"], input[type="text"], button { font: inherit; color: inherit; 
 
 input[type="date"] {
   width: 100%;
-  /* The height comes from the padding rather than a min-height, and the line
-     box is given a definite height, so the content box ends up exactly as tall
-     as the text. That matters because the two engines disagree about what to do
-     with leftover room inside a date field: Blink centres the value, WebKit
-     lays it against the top. Leaving no spare room settles it for both instead
-     of relying on either default. The two engines still size the value's own
-     inner box differently, so min-height keeps the field at the same height as
-     the button beside it on the engine that comes out shorter, and catches the
-     empty field, which Safari on iOS otherwise collapses. */
   min-height: 46px;
-  padding: 9px 12px;
-  line-height: 1.2;
+  padding: 0 12px;
   border: 1px solid var(--edge);
   border-radius: 4px;
   background: var(--surface);
@@ -166,14 +156,23 @@ input[type="date"] {
   font-variant-numeric: tabular-nums;
   -webkit-appearance: none;
   appearance: none;
-  display: block;
+  /* Safari centres a date field's value by making the field itself a flex
+     container, which its own stylesheet does. Overriding that with display:block
+     is what pushed the value against the top of the field on iPhone while
+     desktop Chrome still looked right, so the flex context is kept — as flex
+     rather than the inline-flex Safari uses, so the field stays block-level and
+     cannot pick up a stray gap beneath it in a non-flex parent. */
+  display: flex;
 }
-/* Safari right-aligns the value inside the field and gives this inner box its
-   own line height; both are pinned so it matches the box built above. */
 input[type="date"]::-webkit-date-and-time-value {
+  /* Safari centres the value horizontally by default, and collapses this inner
+     box to nothing when the field has no value. The first line fixes the
+     alignment; the height holds an empty field open. The em value is a fallback
+     for engines without the line-height unit. */
   text-align: left;
-  line-height: 1.2;
   margin: 0;
+  min-height: 1.5em;
+  min-height: 1lh;
 }
 input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
 
