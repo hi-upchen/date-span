@@ -5,22 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>天數計算機｜兩個日期相差幾天、幾週幾天、幾個月</title>
 <meta name="description" content="輸入起算日與結束日，立即算出相差幾週幾天、幾個月幾天與總天數。可儲存多個起算日一起比較，適合追蹤寶寶週數、懷孕週數或紀念日。無廣告、免註冊，離線也能用。">
-<link rel="canonical" href="https://date-span.pages.dev/">
+<link rel="canonical" href="https://days.runawayup.com/">
+<meta property="og:site_name" content="天數計算機">
 <meta property="og:title" content="天數計算機｜兩個日期相差幾天、幾週幾天">
 <meta property="og:description" content="輸入兩個日期，立即算出相差幾週幾天、幾個月幾天與總天數。可儲存多個起算日一起比較，離線也能用。">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://date-span.pages.dev/">
+<meta property="og:url" content="https://days.runawayup.com/">
 <meta property="og:locale" content="zh_TW">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://days.runawayup.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="一張票券樣式的卡片，顯示從 2024/11/03 起算為 1 年 9 個月 17 天，共 655 天。">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#f7f5f0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1f1c19" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="data:,">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%239e231e'/><rect x='9.5' y='4' width='3.6' height='8' rx='1.8' fill='%23fefdfa'/><rect x='18.9' y='4' width='3.6' height='8' rx='1.8' fill='%23fefdfa'/><rect x='6' y='9.5' width='20' height='18' rx='3.2' fill='%23fefdfa'/><rect x='6' y='9.5' width='20' height='4.4' fill='%239e231e'/><rect x='9.6' y='17' width='6.2' height='6.2' rx='1.4' fill='%239e231e'/></svg>">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "天數計算機",
-  "url": "https://date-span.pages.dev/",
+  "url": "https://days.runawayup.com/",
   "description": "輸入起算日與結束日，計算相差幾週幾天、幾個月幾天與總天數，可儲存多個起算日一起比較。",
   "applicationCategory": "UtilityApplication",
   "operatingSystem": "Any",
@@ -694,7 +700,7 @@ footer { font-size: 12.5px; line-height: 1.75; color: var(--faint); }
   var MS_PER_DAY = 86400000;
   var UNITS = ['week', 'month', 'day'];
   var DEFAULT_UNIT = 'month';
-  var CANONICAL = 'https://date-span.pages.dev/';
+  var CANONICAL = 'https://days.runawayup.com/';
 
   // ==========================================================================
   // QR encoding, written from the ISO/IEC 18004 structure because the page ships
@@ -1725,7 +1731,7 @@ footer { font-size: 12.5px; line-height: 1.75; color: var(--faint); }
     ctx.fillText('天數計算機', canvas.width / 2, qrDim + 6);
     ctx.fillStyle = '#555555';
     ctx.font = '24px ui-monospace, Menlo, Consolas, monospace';
-    ctx.fillText('date-span.pages.dev', canvas.width / 2, qrDim + 52);
+    ctx.fillText('days.runawayup.com', canvas.width / 2, qrDim + 52);
     canvas.toBlob(function (blob) { cb(blob); }, 'image/png');
   }
 

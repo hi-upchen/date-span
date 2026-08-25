@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://days.runawayup.com/sitemap.xml
