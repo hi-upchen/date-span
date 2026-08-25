@@ -1,0 +1,9 @@
+# Cloudflare needs this file to hand the short-link store to the page's
+# functions. It is the smallest form that does that job.
+name = "date-span"
+pages_build_output_dir = "."
+compatibility_date = "2026-08-25"
+
+[[kv_namespaces]]
+binding = "LINKS"
+id = "c77fd387580e4e599841702e1cecc3f0"

@@ -658,7 +658,7 @@ footer { font-size: 12.5px; line-height: 1.75; color: var(--faint); }
     </button>
   </section>
 
-  <footer>資料只存在你的瀏覽器裡，無廣告、不追蹤，離線也能用。</footer>
+  <footer>平常資料只存在你的瀏覽器裡。按下分享時，那一份起算日與名稱會存到本站以產生短網址，兩年後自動刪除。無廣告、不追蹤。</footer>
 
   <p class="sr-only" id="live" role="status" aria-live="polite" aria-atomic="true"></p>
 </main>
@@ -1689,14 +1689,44 @@ footer { font-size: 12.5px; line-height: 1.75; color: var(--faint); }
     qrPlate.appendChild(img);
   }
 
+  // Asks the site for a short code for the current state.
+  //
+  // The panel never waits on this. It opens with the full link already in place
+  // and swaps in the short one if and when it arrives. Opening a file from disk,
+  // being offline, or having spent the day's allowance all land in the same
+  // place: the full link, which always works.
+  function fetchShortUrl(query, token) {
+    if (window.location.protocol === 'file:') return;
+    fetch('/api/shorten', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ q: query })
+    }).then(function (res) {
+      return res.ok ? res.json() : null;
+    }).then(function (data) {
+      // The panel may have been closed and reopened on a different state while
+      // this was in flight. The token says whether this answer is still current.
+      if (!data || !data.code || token !== shareToken) return;
+      var short = window.location.origin + '/s/' + data.code;
+      qrState.url = short;
+      shareUrlEl.value = short;
+      renderQR(short);
+    }).catch(function () { /* the full link stays */ });
+  }
+
+  var shareToken = 0;
+
   function openShare() {
+    var query = buildQuery();
     var url = shareUrl();
+    shareToken++;
     qrState.url = url;
     shareUrlEl.value = url;
     renderQR(url);
     systemShareBtn.hidden = !navigator.share;
     if (typeof dialog.showModal === 'function') dialog.showModal();
     else dialog.setAttribute('open', '');
+    fetchShortUrl(query, shareToken);
   }
 
   function closeShare() {
